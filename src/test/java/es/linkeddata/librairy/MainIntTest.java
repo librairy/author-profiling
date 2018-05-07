@@ -26,12 +26,10 @@ public class MainIntTest {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("src/main/resources/papers.jsonl.gz"))));
 
-        //        String user = System.getenv("LIBRAIRY_USER");
-//        String pwd = System.getenv("LIBRAIRY_PWD");
-//
-//        LibrAIryClient librAIryClient = new LibrAIryClient("http://librairy.linkeddata.es/learner",user,pwd);
+        String user = System.getenv("LIBRAIRY_USER");
+        String pwd = System.getenv("LIBRAIRY_PWD");
 
-        LibrAIryClient librAIryClient = new LibrAIryClient("http://localhost:7777","user1","pwd1");
+        LibrAIryClient librAIryClient = new LibrAIryClient("http://librairy.linkeddata.es/learner",user,pwd);
 
         String line;
         ObjectMapper jsonMapper = new ObjectMapper();
