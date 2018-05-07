@@ -36,7 +36,7 @@ public class Main {
         BufferedReader reader = new BufferedReader(new FileReader(new File("src/main/resources/authors.csv")));
         String line;
 
-        Integer min_publications = 0;
+        Integer min_publications = 10;
 
         String user = System.getenv("LIBRAIRY_USER");
         String pwd = System.getenv("LIBRAIRY_PWD");
@@ -46,32 +46,37 @@ public class Main {
 
         ConcurrentHashMap<Publication,List<Author>> uniquePublications = new ConcurrentHashMap<>();
 
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 0l, TimeUnit.MILLISECONDS, new LinkedBlockingDeque(10), new ThreadPoolExecutor.CallerRunsPolicy());
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 2, 0l, TimeUnit.MILLISECONDS, new LinkedBlockingDeque(10), new ThreadPoolExecutor.CallerRunsPolicy());
 
         while((line = reader.readLine()) != null){
             final String text = line;
             executor.submit(() -> {
-                String[] values = text.split(";;");
-                Author author = new Author(values[0]);
-                List<Publication> publications = author.getPublications();
+                try{
+                    String[] values = text.split(";;");
+                    Author author = new Author(values[0]);
+                    List<Publication> publications = author.getPublications();
 
-                List<Publication> availablePublications = publications.stream().filter(pub -> pub.getPaper().getFilePath().isPresent()).collect(Collectors.toList());
+                    List<Publication> availablePublications = publications.stream().filter(pub -> pub.getPaper().getFilePath().isPresent()).collect(Collectors.toList());
 
-                if (availablePublications.size() >= min_publications){
-                    availablePublications.forEach( publication -> {
-                        List<Author> commonAuthors = new ArrayList<>();
+                    if (availablePublications.size() >= min_publications){
+                        availablePublications.forEach( publication -> {
+                            List<Author> commonAuthors = new ArrayList<>();
 
-                        if (uniquePublications.containsKey(publication)){
-                            commonAuthors = uniquePublications.get(publication);
-                        }
+                            if (uniquePublications.containsKey(publication)){
+                                commonAuthors = uniquePublications.get(publication);
+                            }
 
-                        commonAuthors.add(author);
+                            commonAuthors.add(author);
 
-                        uniquePublications.put(publication,commonAuthors);
+                            uniquePublications.put(publication,commonAuthors);
 
-                    });
+                        });
 
-                    LOG.info(author.getName() + ": Total=" + publications.stream().filter(pub -> pub.getPaper().getFilePath().isPresent()).count());
+                        LOG.info(author.getName() + ": Total=" + publications.stream().filter(pub -> pub.getPaper().getFilePath().isPresent()).count());
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
             });

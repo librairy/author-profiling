@@ -33,7 +33,7 @@ public class DOI {
         try {
             Random random = new Random();
 
-            HttpResponse<JsonNode> jsonResponse = Unirest.get("http://api.unpaywall.org/v2/" + value + "?email=example"+random.nextInt(1000)+"@yopmail.com").asJson();
+            HttpResponse<JsonNode> jsonResponse = Unirest.get("http://api.unpaywall.org/v2/" + value + "?email=example"+random.nextInt(100000)+"@yopmail.com").asJson();
 
             JSONObject jsonData = jsonResponse.getBody().getObject();
 

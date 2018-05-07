@@ -94,6 +94,7 @@ public class LibrAIryClient {
         Map<String, String> parameters = ImmutableMap.of(
                 "algorithm","llda",
                 "language","en",
+                "retries","100",
                 "email","cbadenes@fi.upm.es"
         );
         modelParameters.setParameters(parameters);
